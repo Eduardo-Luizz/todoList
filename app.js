@@ -1,5 +1,7 @@
 const express = require('express');
 const checkListsRouter = require('./src/routes/checkList');
+//Importando a config
+require('./config/database');
 
 const app = express();
 app.use(express.json()); // chamando midlware
