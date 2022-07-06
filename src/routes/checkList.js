@@ -14,15 +14,24 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.post('/', async (req, res) => {
-  let { name } = req.body;
+router.get('/new', async(req, res) => {
   try {
-    let checkList = await Checklist.create({name})
-    res.status(200).send(checkList);
+    let checkList = new Checklist();
+    res.status(200).render('checkLists/new', {checkList: checkList})
   } catch (error) {
-    res.status(422).json(error)
+    res.status(500).render('pages/error', { errors: 'Erro ao carregar o formulário' })
   }
-  // console.log(name);
+})
+
+router.post('/', async (req, res) => {
+  let { name } = req.body.checkList;
+  let checkList = new Checklist({ name })
+  try {
+    await checklist.save();
+    res.redirect('/checkLists');
+  } catch (error) {
+    res.status(422).render('checkLists/new', {checkLists: {...checkList, error}});
+  }
 })
 
 router.get('/:id', async (req,res) => {
@@ -31,7 +40,7 @@ router.get('/:id', async (req,res) => {
     res.status(200).render('checklists/show', {checkList: checkList}); // => retorna a página
     // res.status(200).json(checkList);
   } catch (error) {
-    res.status(200).render('pages/error', {error: 'Erro ao exibir as listas de tarefas'});
+    res.status(500).render('pages/error', {error: 'Erro ao exibir as listas de tarefas'});
     // res.status(422).json(error)
   }
 })
